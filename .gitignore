@@ -19,6 +19,7 @@
 
 # backend misc
 /backend-node/.DS_Store
+/backend-node/config.env
 /backend-node/.env.local
 /backend-node/.env.development.local
 /backend-node/.env.test.local
