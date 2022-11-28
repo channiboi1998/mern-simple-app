@@ -1,15 +1,27 @@
+import { useState } from 'react';
 import { useAddTaskMutation } from '../api/api';
-
 import {
     TextField, Button, 
     Grid
 } from '@mui/material';
-
 import AddIcon from '@mui/icons-material/Add';
 
 const NewTask = () => {
 
+    const [newTaskName, setNewTaskName] = useState("");
     const [addTask] = useAddTaskMutation();
+
+    const handleAddNewTaskSubmit = (taskName: string) => {
+        if (taskName === "") {
+            return alert("task name is required!");
+        };
+        const newTask = {
+            name: taskName,
+            completed: false,
+        };
+        addTask(newTask);
+        setNewTaskName("");
+    }
 
     return (
         <Grid className='add-new-task-form' container>
@@ -18,7 +30,7 @@ const NewTask = () => {
                 backgroundColor: '#f1f1f1',
                 height: '50px'
             }}>
-                <TextField id='standard-basic' placeholder='Add new task here' variant='standard'
+                <TextField id='standard-basic' placeholder='Add new task here' variant='standard' value={newTaskName}
                     InputProps={{
                         disableUnderline: true,
                     }}
@@ -26,6 +38,7 @@ const NewTask = () => {
                         width: '100%',
                         border: 'unset',
                     }}
+                    onChange={(e) => setNewTaskName(e.currentTarget.value)}
                 />
             </Grid>
             <Grid item xs={4}>
@@ -34,7 +47,7 @@ const NewTask = () => {
                     height: '100%',
                     borderRadius: 'unset'
                     }}
-                    onClick={() => addTask({ name: 'This is a new task', completed: false })}
+                    onClick={() => handleAddNewTaskSubmit(newTaskName)}
                 >Add Task</Button>
             </Grid>
         </Grid>

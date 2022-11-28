@@ -26,7 +26,6 @@ const TasksList = () => {
         data.content = 'is loading .....';
     } else if (isSuccess) {
         data.status = 'fulfilled';
-        console.log(tasks.data);
         data.content = tasks.data.map((task:TaskInterface) => {
             return (
                 <Task key={task._id} task={task}></Task>

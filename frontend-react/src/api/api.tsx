@@ -5,10 +5,11 @@ export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: 'http://localhost:8000/',
     }),
-    tagTypes: ['Task'],
-    endpoints: (builder) => ({
+    tagTypes: ['Tasks'],
+    endpoints: builder => ({
         getTasks: builder.query({
-            query: (uri) => uri
+            query: (uri) => uri,
+            providesTags: ['Tasks']
         }),
         addTask: builder.mutation({
             query: (task) => ({
@@ -16,9 +17,34 @@ export const api = createApi({
                 method: 'POST',
                 headers: { 
                     'content-type': 'application/x-www-form-urlencoded'
-                 },
-                body: 'test'
-            })
+                },
+                body: new URLSearchParams(Object.entries(task)).toString(),
+            }),
+            invalidatesTags: ['Tasks']
+        }),
+        updateTaskCompletedStatus: builder.mutation({
+            query: (task) => ({
+                url: '/tasks',
+                method: 'PATCH',
+                body: task,
+            }),
+            invalidatesTags: ['Tasks']
+        }),
+        updateTaskName: builder.mutation({
+            query: (task) => ({
+                url: '/tasks/' + task.id,
+                method: 'PUT',
+                body: task, 
+            }),
+            invalidatesTags: ['Tasks']
+        }),
+        deleteTask: builder.mutation({
+            query: (task) => ({
+                url: '/tasks/' + task.id,
+                method: 'DELETE',
+                body: task
+            }),
+            invalidatesTags: ['Tasks']
         })
     })
 });
@@ -26,4 +52,7 @@ export const api = createApi({
 export const {
     useGetTasksQuery,
     useAddTaskMutation,
+    useUpdateTaskCompletedStatusMutation,
+    useUpdateTaskNameMutation,
+    useDeleteTaskMutation,
 } = api; 

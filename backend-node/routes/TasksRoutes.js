@@ -9,5 +9,8 @@ const TasksController = new Controller();
 
 Router.get('/tasks', TasksController.getTasks.bind(TasksController));
 Router.post('/tasks', TasksController.addNewTask.bind(TasksController));
+Router.patch('/tasks', TasksController.editTaskCompletedStatus.bind(TasksController));
+Router.put('/tasks/(:id)', TasksController.editTaskName.bind(TasksController));
+Router.delete('/tasks/(:id)', TasksController.deleteTask.bind(TasksController));
 
 module.exports = Router;

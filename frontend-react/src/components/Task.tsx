@@ -2,6 +2,8 @@ import { useState, FocusEvent } from 'react';
 
 import TaskInterface from '../interfaces/TaskInterface';
 
+import { useUpdateTaskCompletedStatusMutation, useUpdateTaskNameMutation, useDeleteTaskMutation } from '../api/api';
+
 import {
     ListItem, ListItemButton,
     ListItemIcon, ListItemText,
@@ -15,14 +17,20 @@ import SaveIcon from '@mui/icons-material/Save';
 
 const Task = (props: {  key: string, task: TaskInterface }) => {
 
-    const [taskName, setTaskName] = useState(props.task.name);
     const [editingStatus, setEditingStatus] = useState(false);
+
+    const [updateTaskCompletedStatus] = useUpdateTaskCompletedStatusMutation();
+    const [updateTaskName] = useUpdateTaskNameMutation();
+    const [deleteTask] = useDeleteTaskMutation();
 
     const handleInputChange = (e: FocusEvent<HTMLInputElement>) => {
         if (e.currentTarget.value === '') {
             console.log('no value');
-        } else {
-            setTaskName(e.currentTarget.value);
+        } else {    
+            updateTaskName({
+                name: e.currentTarget.value,
+                id: props.task._id,
+            });
         }
         setEditingStatus(false);
     }
@@ -40,7 +48,7 @@ const Task = (props: {  key: string, task: TaskInterface }) => {
                             <IconButton onClick={() => setEditingStatus(true)}>
                                 <EditIcon />
                             </IconButton>
-                            <IconButton edge='end'>
+                            <IconButton edge='end' onClick={() => deleteTask({ id: props.task._id })}>
                                 <DeleteIcon />
                             </IconButton>
                         </>
@@ -53,23 +61,23 @@ const Task = (props: {  key: string, task: TaskInterface }) => {
                 <ListItemIcon>
                     <Checkbox
                         edge='start'
-                        checked={true}
+                        checked={props.task.completed}
                         tabIndex={-1}
                         disableRipple
-                        onChange={() => console.log('one of the items status has been changed')}
+                        onChange={(e) => updateTaskCompletedStatus({ id: props.task._id, completed: e.currentTarget.checked })}
                     />
                 </ListItemIcon>
                 {editingStatus === true ?
-                    <TextField id='standard-basic' placeholder='Add new task here' variant='standard'
+                    <TextField id='standard-basic' placeholder='Edit task name here' variant='standard'
                         sx={{
                             width: '100%',
                             maxWidth: '300px'
                         }}
-                        defaultValue={taskName}
+                        defaultValue={props.task.name}
                         onBlur={handleInputChange}>
                     </TextField>
                     :
-                    <ListItemText primary={taskName}></ListItemText>
+                    <ListItemText primary={props.task.name}></ListItemText>
                 }
             </ListItemButton>
         </ListItem>
